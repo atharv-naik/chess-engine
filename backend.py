@@ -8,13 +8,3 @@ def get_coups(board, pos, pieces):
 
 def is_check(board):
     return True
-
-
-import copy
-array = {}
-p = [1, 2, 3]
-array['a'] = copy.copy(p)
-p[0] = 4
-array['b'] = copy.copy(p)
-# print(array)
-
