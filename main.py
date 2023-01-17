@@ -1,11 +1,17 @@
 import pygame
 import backend
 import copy
+import json
 from menu import Button
 
 DIMENSION = 800
 HEIGHT = 1000
 WIDTH = 800
+
+WINDOW_SCALE = 0.9
+DIMENSION = WINDOW_SCALE*DIMENSION
+HEIGHT = WINDOW_SCALE*HEIGHT
+WIDTH = WINDOW_SCALE*WIDTH
 
 BRAWN_DARK = (255, 206, 158)
 BRAWN_LIGHT = (209, 139, 71)
@@ -64,8 +70,11 @@ start_img_height = start_img.get_height()
 exit_img_width = exit_img.get_width()
 exit_img_height = exit_img.get_height()
 
-start_button = Button(200, HEIGHT/2 - start_img_height/2, start_img, 0.7)
-exit_button = Button(WIDTH/2, HEIGHT/2 - exit_img_height/2, exit_img, 0.7)
+start_button = Button(200*DIMENSION/800, HEIGHT/2 -
+                      start_img_height/2, start_img, 0.7*DIMENSION/800)
+exit_button = Button(WIDTH/2, HEIGHT/2 - exit_img_height /
+                     2, exit_img, 0.7*DIMENSION/800)
+
 
 def highlight_selection():
     if play:
@@ -162,7 +171,7 @@ def show_valid_moves():
                                 draw_circle(a+i, b+j+1)
                 elif pieces[b][a] == bP:
                     if 0 <= b+1 <= 7:
-                        draw_circle(a, b)
+                        draw_circle(a, b+2)
                 elif pieces[b][a] == wK:
                     for i in range(-1, 2):
                         for j in range(-1, 2):
@@ -287,6 +296,55 @@ def check_undo_redo(event):
                 update_pieces()
 
 
+def run_game_menu():
+    global run_menu
+    screen.fill((202, 228, 241))
+
+    start_button.draw(screen)
+    exit_button.draw(screen)
+
+    if start_button.is_clicked():
+        run_menu = False
+    if exit_button.is_clicked():
+        pygame.quit()
+        quit()
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            quit()
+    pygame.display.update()
+
+
+def manage_save_load(event):
+    global gamestate, top, piecesRep, loaded
+    # save
+    if play:
+        if event.type == pygame.KEYDOWN:
+            mods = pygame.key.get_mods()
+            if mods & pygame.KMOD_CTRL and event.key == pygame.K_s:
+                state = json.dumps([gamestate, top])
+                with open("gamestate.json", "w") as f:
+                    json.dump(state, f)
+                print("saved")
+    # load
+    else:
+        if event.type == pygame.KEYDOWN:
+            mods = pygame.key.get_mods()
+            if mods & pygame.KMOD_CTRL and event.key == pygame.K_l:
+                try:
+                    print("loading...", end="\r")
+                    with open("gamestate.json", "r") as f:
+                        state = json.load(f)
+                    gamestate, top = json.loads(state)
+                    gamestate = {int(k): v for k, v in gamestate.items()}
+                    piecesRep = copy.deepcopy(gamestate[top])
+                    update_pieces()
+                    loaded = True
+                    print("loaded successfully")
+                except:
+                    print("no save file found")
+
+
 pieces = [[None] * 8 for _ in range(8)]  # empty board initialized
 pool = [                        # pool of pieces to be placed on board
     [bK, bQ, bR, bB, bN, bP],
@@ -299,26 +357,12 @@ top = 0
 play = False
 run = True
 sqselected = None
+loaded = False
 run_menu = True
 while run:
     if run_menu:
-        screen.fill((202, 228, 241))
-
-        start_button.draw(screen)
-        exit_button.draw(screen)
-
-        if start_button.is_clicked():
-            run_menu = False
-        if exit_button.is_clicked():
-            pygame.quit()
-            quit()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
-        pygame.display.update()
+        run_game_menu()
         continue
-
 
     #     for event in pygame.event.get():
     #         if event.type == pygame.QUIT:
@@ -326,7 +370,6 @@ while run:
     #     pygame.display.update()
 
     # pygame.quit()
-
 
     # screen.fill(pygame.Color("white"))
     screen.fill((218, 208, 120))
@@ -358,8 +401,8 @@ while run:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             pos = pygame.mouse.get_pos()
 
-            y = pos[1] // (HEIGHT // 10)
-            x = pos[0] // (WIDTH // 8)
+            y = int(pos[1] // (HEIGHT // 10))
+            x = int(pos[0] // (WIDTH // 8))
             if not play:
                 if sqselected is not None:
                     if 1 <= y <= 8:
@@ -425,9 +468,13 @@ while run:
                 sqselected = None
                 if play:
                     update_piecesRep()
-                    gamestate = {0: copy.deepcopy(piecesRep)}
+                    if not loaded:
+                        gamestate = {0: copy.deepcopy(piecesRep)}
 
         # undo and redo
         check_undo_redo(event)
+
+        # save and load
+        manage_save_load(event)
 
     pygame.display.update()
