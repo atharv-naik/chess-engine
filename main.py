@@ -2,7 +2,7 @@ import pygame
 import backend
 import copy
 import json
-from menu import Button
+from button import Button
 
 DIMENSION = 800
 HEIGHT = 1000
@@ -29,7 +29,7 @@ GREEN_BOARD = (GREEN_LIGHT, GREEN_DARK)  # light, dark
 BROWN_BOARD = (BRAWN_LIGHT, BRAWN_DARK)  # light, dark
 
 
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
+screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.RESIZABLE)
 pygame.display.set_caption("Chess")
 
 # load assets
@@ -205,65 +205,25 @@ def show_valid_moves():
 
 
 def update_pieces():
+    piece_map = {
+        "bK": bK, "bQ": bQ, "bR": bR, "bB": bB, "bN": bN, "bP": bP,
+        "wK": wK, "wQ": wQ, "wR": wR, "wB": wB, "wN": wN, "wP": wP
+    }
     for i in range(8):
         for j in range(8):
-            if piecesRep[j][i] == "bK":
-                pieces[j][i] = bK
-            elif piecesRep[j][i] == "bQ":
-                pieces[j][i] = bQ
-            elif piecesRep[j][i] == "bR":
-                pieces[j][i] = bR
-            elif piecesRep[j][i] == "bB":
-                pieces[j][i] = bB
-            elif piecesRep[j][i] == "bN":
-                pieces[j][i] = bN
-            elif piecesRep[j][i] == "bP":
-                pieces[j][i] = bP
-            elif piecesRep[j][i] == "wK":
-                pieces[j][i] = wK
-            elif piecesRep[j][i] == "wQ":
-                pieces[j][i] = wQ
-            elif piecesRep[j][i] == "wR":
-                pieces[j][i] = wR
-            elif piecesRep[j][i] == "wB":
-                pieces[j][i] = wB
-            elif piecesRep[j][i] == "wN":
-                pieces[j][i] = wN
-            elif piecesRep[j][i] == "wP":
-                pieces[j][i] = wP
-            else:
-                pieces[j][i] = None
+            pieces[j][i] = piece_map.get(piecesRep[j][i])
+
 
 
 def update_piecesRep():
+    piece_map = {
+        bK: "bK", bQ: "bQ", bR: "bR", bB: "bB", bN: "bN", bP: "bP",
+        wK: "wK", wQ: "wQ", wR: "wR", wB: "wB", wN: "wN", wP: "wP"
+    }
     for i in range(8):
         for j in range(8):
-            if pieces[j][i] == bK:
-                piecesRep[j][i] = "bK"
-            elif pieces[j][i] == bQ:
-                piecesRep[j][i] = "bQ"
-            elif pieces[j][i] == bR:
-                piecesRep[j][i] = "bR"
-            elif pieces[j][i] == bB:
-                piecesRep[j][i] = "bB"
-            elif pieces[j][i] == bN:
-                piecesRep[j][i] = "bN"
-            elif pieces[j][i] == bP:
-                piecesRep[j][i] = "bP"
-            elif pieces[j][i] == wK:
-                piecesRep[j][i] = "wK"
-            elif pieces[j][i] == wQ:
-                piecesRep[j][i] = "wQ"
-            elif pieces[j][i] == wR:
-                piecesRep[j][i] = "wR"
-            elif pieces[j][i] == wB:
-                piecesRep[j][i] = "wB"
-            elif pieces[j][i] == wN:
-                piecesRep[j][i] = "wN"
-            elif pieces[j][i] == wP:
-                piecesRep[j][i] = "wP"
-            else:
-                piecesRep[j][i] = None
+            piecesRep[j][i] = piece_map.get(pieces[j][i])
+
 
 
 def show_history():
@@ -364,16 +324,8 @@ while run:
         run_game_menu()
         continue
 
-    #     for event in pygame.event.get():
-    #         if event.type == pygame.QUIT:
-    #             run = False
-    #     pygame.display.update()
-
-    # pygame.quit()
-
     # screen.fill(pygame.Color("white"))
     screen.fill((218, 208, 120))
-    # screen.blit(board, (0, 100))
 
     # blit changes on board
 
@@ -394,8 +346,7 @@ while run:
     # event handling
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            pygame.quit()
-            quit()
+            run = False
 
         # handling mouse events
         elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -471,6 +422,13 @@ while run:
                     if not loaded:
                         gamestate = {0: copy.deepcopy(piecesRep)}
 
+        elif event.type == pygame.VIDEORESIZE:
+            screen = pygame.display.set_mode((event.w, event.h), pygame.RESIZABLE)
+            screen.fill((218, 208, 120))
+            draw_board(GREEN_BOARD)
+            draw_pool()
+            draw_pieces()
+
         # undo and redo
         check_undo_redo(event)
 
@@ -478,3 +436,6 @@ while run:
         manage_save_load(event)
 
     pygame.display.update()
+
+pygame.quit()
+quit()
