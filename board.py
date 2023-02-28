@@ -35,14 +35,14 @@ class Board():
         self.LONG_PRESS_DELAY = 500
 
         self.boardRep = [
-            ["bR", "bN", "bB", "bQ", "bK", "bB", "bN", "bR"],
-            ["bP", "bP", "bP", "bP", "bP", "bP", "bP", "bP"],
+            ["bR1", "bN1", "bB1", "bQ", "bK", "bB2", "bN2", "bR2"],
+            ["bP1", "bP2", "bP3", "bP4", "bP5", "bP6", "bP7", "bP8"],
             [None, None, None, None, None, None, None, None],
             [None, None, None, None, None, None, None, None],
             [None, None, None, None, None, None, None, None],
             [None, None, None, None, None, None, None, None],
-            ["wP", "wP", "wP", "wP", "wP", "wP", "wP", "wP"],
-            ["wR", "wN", "wB", "wQ", "wK", "wB", "wN", "wR"]
+            ["wP1", "wP2", "wP3", "wP4", "wP5", "wP6", "wP7", "wP8"],
+            ["wR1", "wN1", "wB1", "wQ", "wK", "wB2", "wN2", "wR2"]
         ]
         self.play = True
         self.turn = turn
@@ -56,42 +56,91 @@ class Board():
             (self.WIDTH, self.HEIGHT), pygame.RESIZABLE)
         pygame.display.set_caption(f"Chess- {self.get_color_name(self.turn)}'s turn")
 
-        # load assets
-        self.bR = Piece(pygame.transform.scale(pygame.image.load(
+        # initialize pieces
+        self.bR1 = Piece(pygame.transform.scale(pygame.image.load(
             "assets/images/bR.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "bR")
-        self.bN = Piece(pygame.transform.scale(pygame.image.load(
+        self.bR2 = Piece(pygame.transform.scale(pygame.image.load(
+            "assets/images/bR.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "bR")
+        
+        self.bN1 = Piece(pygame.transform.scale(pygame.image.load(
             "assets/images/bN.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "bN")
-        self.bB = Piece(pygame.transform.scale(pygame.image.load(
+        self.bN2 = Piece(pygame.transform.scale(pygame.image.load(
+            "assets/images/bN.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "bN")
+        
+        self.bB1 = Piece(pygame.transform.scale(pygame.image.load(
             "assets/images/bB.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "bB")
+        self.bB2 = Piece(pygame.transform.scale(pygame.image.load(
+            "assets/images/bB.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "bB")
+        
         self.bQ = Piece(pygame.transform.scale(pygame.image.load(
             "assets/images/bQ.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "bQ")
         self.bK = Piece(pygame.transform.scale(pygame.image.load(
             "assets/images/bK.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "bK")
-        self.bP = Piece(pygame.transform.scale(pygame.image.load(
+        
+        self.bP1 = Piece(pygame.transform.scale(pygame.image.load(
+            "assets/images/bP.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "bP")
+        self.bP2 = Piece(pygame.transform.scale(pygame.image.load(
+            "assets/images/bP.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "bP")
+        self.bP3 = Piece(pygame.transform.scale(pygame.image.load(
+            "assets/images/bP.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "bP")
+        self.bP4 = Piece(pygame.transform.scale(pygame.image.load(
+            "assets/images/bP.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "bP")
+        self.bP5 = Piece(pygame.transform.scale(pygame.image.load(
+            "assets/images/bP.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "bP")
+        self.bP6 = Piece(pygame.transform.scale(pygame.image.load(
+            "assets/images/bP.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "bP")
+        self.bP7 = Piece(pygame.transform.scale(pygame.image.load(
+            "assets/images/bP.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "bP")
+        self.bP8 = Piece(pygame.transform.scale(pygame.image.load(
             "assets/images/bP.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "bP")
 
-        self.wR = Piece(pygame.transform.scale(pygame.image.load(
+        self.wR1 = Piece(pygame.transform.scale(pygame.image.load(
             "assets/images/wR.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "wR")
-        self.wN = Piece(pygame.transform.scale(pygame.image.load(
+        self.wR2 = Piece(pygame.transform.scale(pygame.image.load(
+            "assets/images/wR.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "wR")
+        
+        self.wN1 = Piece(pygame.transform.scale(pygame.image.load(
             "assets/images/wN.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "wN")
-        self.wB = Piece(pygame.transform.scale(pygame.image.load(
+        self.wN2 = Piece(pygame.transform.scale(pygame.image.load(
+            "assets/images/wN.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "wN")
+        
+        self.wB1 = Piece(pygame.transform.scale(pygame.image.load(
             "assets/images/wB.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "wB")
+        self.wB2 = Piece(pygame.transform.scale(pygame.image.load(
+            "assets/images/wB.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "wB")
+        
         self.wQ = Piece(pygame.transform.scale(pygame.image.load(
             "assets/images/wQ.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "wQ")
         self.wK = Piece(pygame.transform.scale(pygame.image.load(
             "assets/images/wK.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "wK")
-        self.wP = Piece(pygame.transform.scale(pygame.image.load(
+        
+        self.wP1 = Piece(pygame.transform.scale(pygame.image.load(
+            "assets/images/wP.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "wP")
+        self.wP2 = Piece(pygame.transform.scale(pygame.image.load(
+            "assets/images/wP.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "wP")
+        self.wP3 = Piece(pygame.transform.scale(pygame.image.load(
+            "assets/images/wP.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "wP")
+        self.wP4 = Piece(pygame.transform.scale(pygame.image.load(
+            "assets/images/wP.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "wP")
+        self.wP5 = Piece(pygame.transform.scale(pygame.image.load(
+            "assets/images/wP.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "wP")
+        self.wP6 = Piece(pygame.transform.scale(pygame.image.load(
+            "assets/images/wP.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "wP")
+        self.wP7 = Piece(pygame.transform.scale(pygame.image.load(
+            "assets/images/wP.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "wP")
+        self.wP8 = Piece(pygame.transform.scale(pygame.image.load(
             "assets/images/wP.png"), (self.SQUARE_SIZE, self.SQUARE_SIZE)), "wP")
 
+
         self.board = [
-            [self.bR, self.bN, self.bB, self.bQ, self.bK, self.bB, self.bN, self.bR],
-            [self.bP, self.bP, self.bP, self.bP, self.bP, self.bP, self.bP, self.bP],
+            [self.bR1, self.bN1, self.bB1, self.bQ, self.bK, self.bB2, self.bN2, self.bR2],
+            [self.bP1, self.bP2, self.bP3, self.bP4, self.bP5, self.bP6, self.bP7, self.bP8],
             [None, None, None, None, None, None, None, None],
             [None, None, None, None, None, None, None, None],
             [None, None, None, None, None, None, None, None],
             [None, None, None, None, None, None, None, None],
-            [self.wP, self.wP, self.wP, self.wP, self.wP, self.wP, self.wP, self.wP],
-            [self.wR, self.wN, self.wB, self.wQ, self.wK, self.wB, self.wN, self.wR]
+            [self.wP1, self.wP2, self.wP3, self.wP4, self.wP5, self.wP6, self.wP7, self.wP8],
+            [self.wR1, self.wN1, self.wB1, self.wQ, self.wK, self.wB2, self.wN2, self.wR2]
         ]
 
     def draw(self, screen: pygame.Surface) -> None:
@@ -188,8 +237,10 @@ class Board():
         '''Update the board.'''
 
         piece_map = {
-            "bK": self.bK, "bQ": self.bQ, "bR": self.bR, "bB": self.bB, "bN": self.bN, "bP": self.bP,
-            "wK": self.wK, "wQ": self.wQ, "wR": self.wR, "wB": self.wB, "wN": self.wN, "wP": self.wP
+            "bK": self.bK, "bQ": self.bQ, "bR1": self.bR1, "bR2": self.bR2, "bB1": self.bB1, "bB2": self.bB2, "bN1": self.bN1, "bN2": self.bN2,
+            "bP1": self.bP1, "bP2": self.bP2, "bP3": self.bP3, "bP4": self.bP4, "bP5": self.bP5, "bP6": self.bP6, "bP7": self.bP7, "bP8": self.bP8,
+            "wK": self.wK, "wQ": self.wQ, "wR1": self.wR1, "wR2": self.wR2, "wB1": self.wB1, "wB2": self.wB2, "wN1": self.wN1, "wN2": self.wN2,
+            "wP1": self.wP1, "wP2": self.wP2, "wP3": self.wP3, "wP4": self.wP4, "wP5": self.wP5, "wP6": self.wP6, "wP7": self.wP7, "wP8": self.wP8
         }
         for i in range(8):
             for j in range(8):
@@ -198,10 +249,10 @@ class Board():
     def get_color_name(self, color: str) -> str:
         '''Get the name of a color.'''
 
-        return "white" if color == "w" else "black"
+        return "WHITE" if color == "w" else "BLACK"
 
     def update_progress(self, x1: int, y1: int, x2: int, y2: int) -> None:
-        '''Update the progress of the game.'''
+        '''Update game progress.'''
 
         self.boardRep[y2][x2] = self.boardRep[y1][x1]
         self.boardRep[y1][x1] = None
