@@ -7,7 +7,15 @@ class Piece():
 
     piece_id = 0
 
-    def __init__(self, piece: pygame.Surface, piece_name: str) -> None:
+    def __init__(self, piece: pygame.Surface=None, piece_name: str=None, Nonetype=False) -> None:
+        self.isNone = Nonetype
+        if Nonetype:
+            self.color = None
+            self.type = None
+            self.piece = None
+            self.piece_name = None
+            self.piece_id = None
+            return
         self.color = piece_name[0]
         self.type = piece_name[1]
         self.piece = piece
@@ -23,11 +31,16 @@ class Piece():
                 if board[j][i].piece_id == self.piece_id:
                     return (i, j)
 
+    # def move(self, board: Board, x: int, y: int) -> None:
+    #     '''Move a piece to a location.'''
+
+    #     board[y][x] = self
+
     def get_moves(self, board: list, x: int, y: int) -> list[tuple]:
         '''Get the possible moves for a piece.'''
 
         # x, y = self.location(board)
-        moves = []
+        moves = set()
         if self.type == "K":
             moves = self.get_king_moves(board, x, y)
         elif self.type == "Q":
@@ -45,74 +58,74 @@ class Piece():
     def get_pawn_moves(self, board: list, x: int, y: int) -> list[tuple]:
         '''Get the possible moves for a pawn.'''
 
-        moves = []
+        moves = set()
         if self.color == "w":
             if board[y - 1][x] is None: # move forward
-                moves.append((x, y - 1))
+                moves.add((x, y - 1))
                 if y == 6 and board[y - 2][x] is None: # move forward 2
-                    moves.append((x, y - 2))
+                    moves.add((x, y - 2))
             if x > 0 and board[y - 1][x - 1] is not None and board[y - 1][x - 1].color != self.color: # capture left
-                moves.append((x - 1, y - 1))
+                moves.add((x - 1, y - 1))
             if x < 7 and board[y - 1][x + 1] is not None and board[y - 1][x + 1].color != self.color: # capture right
-                moves.append((x + 1, y - 1))
+                moves.add((x + 1, y - 1))
         else:
             if board[y + 1][x] is None: # move forward
-                moves.append((x, y + 1))
+                moves.add((x, y + 1))
                 if y == 1 and board[y + 2][x] is None: # move forward 2
-                    moves.append((x, y + 2))
+                    moves.add((x, y + 2))
             if x > 0 and board[y + 1][x - 1] is not None and board[y + 1][x - 1].color != self.color: # capture left
-                moves.append((x - 1, y + 1))
+                moves.add((x - 1, y + 1))
             if x < 7 and board[y + 1][x + 1] is not None and board[y + 1][x + 1].color != self.color: # capture right
-                moves.append((x + 1, y + 1))
+                moves.add((x + 1, y + 1))
         return moves
 
     def get_knight_moves(self, board: list, x: int, y: int) -> list[tuple]:
         '''Get the possible moves for a knight.'''
 
-        moves = []
+        moves = set()
         for i, j in ((-2, -1), (-2, 1), (-1, -2), (-1, 2), (1, -2), (1, 2), (2, -1), (2, 1)): # check all possible moves
             if 0 <= x + i < 8 and 0 <= y + j < 8: # if on the board
                 if board[y + j][x + i] is None or board[y + j][x + i].color != self.color: # if empty or enemy
-                    moves.append((x + i, y + j))
+                    moves.add((x + i, y + j))
         return moves
     
     def get_bishop_moves(self, board: list, x: int, y: int) -> list[tuple]:
         '''Get the possible moves for a bishop.'''
 
-        moves = []
+        moves = set()
         for i in range(1, 8): # lower right diagonal
             if 0 <= x + i < 8 and 0 <= y + i < 8: # if on the board
                 if board[y + i][x + i] is None: # if empty
-                    moves.append((x + i, y + i))
+                    moves.add((x + i, y + i))
                 elif board[y + i][x + i].color != self.color: # if enemy
-                    moves.append((x + i, y + i))
+                    moves.add((x + i, y + i))
                     break
                 else: # if friendly
                     break
         for i in range(1, 8): # upper right diagonal
             if 0 <= x + i < 8 and 0 <= y - i < 8: # if on the board
                 if board[y - i][x + i] is None: # if empty
-                    moves.append((x + i, y - i))
+                    moves.add((x + i, y - i))
                 elif board[y - i][x + i].color != self.color: # if enemy
-                    moves.append((x + i, y - i))
+                    moves.add((x + i, y - i))
                     break
                 else: # if friendly
                     break
         for i in range(1, 8): # lower left diagonal
             if 0 <= x - i < 8 and 0 <= y + i < 8: # if on the board
                 if board[y + i][x - i] is None: # if empty
-                    moves.append((x - i, y + i))
+                    moves.add((x - i, y + i))
                 elif board[y + i][x - i].color != self.color: # if enemy
-                    moves.append((x - i, y + i))
+                    moves.add((x - i, y + i))
                     break
                 else: # if friendly
                     break
         for i in range(1, 8): # upper left diagonal
             if 0 <= x - i < 8 and 0 <= y - i < 8: # if on the board
                 if board[y - i][x - i] is None: # if empty
-                    moves.append((x - i, y - i))
+                    moves.add((x - i, y - i))
                 elif board[y - i][x - i].color != self.color: # if enemy
-                    moves.append((x - i, y - i))
+                    moves.add((x - i, y - i))
                     break
                 else: # if friendly
                     break
@@ -121,40 +134,40 @@ class Piece():
     def get_rook_moves(self, board: list, x: int, y: int) -> list[tuple]:
         '''Get the possible moves for a rook.'''
 
-        moves = []
+        moves = set()
         for i in range(1, 8): # check right
             if 0 <= x + i < 8: # if on the board
                 if board[y][x + i] is None: # if empty
-                    moves.append((x + i, y))
+                    moves.add((x + i, y))
                 elif board[y][x + i].color != self.color: # if enemy
-                    moves.append((x + i, y))
+                    moves.add((x + i, y))
                     break
                 else: # if friendly
                     break
         for i in range(1, 8): # check left
             if 0 <= x - i < 8: # if on the board
                 if board[y][x - i] is None: # if empty
-                    moves.append((x - i, y))
+                    moves.add((x - i, y))
                 elif board[y][x - i].color != self.color: # if enemy
-                    moves.append((x - i, y))
+                    moves.add((x - i, y))
                     break
                 else: # if friendly
                     break
         for i in range(1, 8): # check down
             if 0 <= y + i < 8: # if on the board
                 if board[y + i][x] is None: # if empty
-                    moves.append((x, y + i))
+                    moves.add((x, y + i))
                 elif board[y + i][x].color != self.color: # if enemy
-                    moves.append((x, y + i))
+                    moves.add((x, y + i))
                     break
                 else: # if friendly
                     break
         for i in range(1, 8): # check up
             if 0 <= y - i < 8: # if on the board
                 if board[y - i][x] is None: # if empty
-                    moves.append((x, y - i))
+                    moves.add((x, y - i))
                 elif board[y - i][x].color != self.color: # if enemy
-                    moves.append((x, y - i))
+                    moves.add((x, y - i))
                     break
                 else: # if friendly
                     break
@@ -163,7 +176,7 @@ class Piece():
     def get_queen_moves(self, board: list, x: int, y: int) -> list[tuple]:
         '''Get the possible moves for a queen.'''
 
-        moves = []
+        moves = set()
         # queen moves are just the combination of rook and bishop moves
         moves.extend(self.get_rook_moves(board, x, y))
         moves.extend(self.get_bishop_moves(board, x, y))
@@ -172,11 +185,14 @@ class Piece():
     def get_king_moves(self, board: list, x: int, y: int):
         '''Get the possible moves for a king.'''
 
-        moves = []
+        moves = set()
         for i, j in ((-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)): # check all possible moves
             if 0 <= x + i < 8 and 0 <= y + j < 8: # if on the board
                 if board[y + j][x + i] is None or board[y + j][x + i].color != self.color: # if empty or enemy
-                    moves.append((x + i, y + j))
+                    moves.add((x + i, y + j))
         # remove moves that would put the king in check
         
         return moves
+
+p = Piece(Nonetype=True)
+print(p.isNone)
