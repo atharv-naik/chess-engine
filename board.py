@@ -53,7 +53,7 @@ class Board():
         self.ceil = len(self.progress)
 
         self.screen = pygame.display.set_mode(
-            (self.WIDTH, self.HEIGHT), pygame.RESIZABLE)
+            (self.WIDTH, self.HEIGHT))
         pygame.display.set_caption(f"Chess- {self.get_color_name(self.turn)}'s turn")
 
         # initialize pieces
